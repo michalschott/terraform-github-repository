@@ -1,4 +1,4 @@
-module "repository" {
+module "repository_labels" {
   source = "../"
 
   name               = "example"
