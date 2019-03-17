@@ -151,5 +151,65 @@ variable "deploy_keys" {
 variable "issue_labels" {
   type        = "list"
   default     = []
-  description = "Create and manage issue labels for a repository"
+  description = "Create and manage issue labels for a repository."
+}
+
+variable "branch_protection_enabled" {
+  type        = "string"
+  default     = 1
+  description = "Enable branch protection."
+}
+
+variable "branch_protection_enforce_admins" {
+  type        = "string"
+  default     = false
+  description = "Enforce status checks for repository administrators."
+}
+
+variable "branch_protection_strict" {
+  type        = "string"
+  default     = true
+  description = "Require branches to be up to date before merging."
+}
+
+variable "branch_protection_contexts" {
+  type        = "list"
+  default     = []
+  description = "The list of status checks to require in order to merge into this branch."
+}
+
+variable "branch_protection_dismiss_stale_reviews" {
+  type        = "string"
+  default     = true
+  description = "Dismiss approved reviews automatically when a new commit is pushed."
+}
+
+variable "branch_protection_dismissal_users" {
+  type        = "list"
+  default     = []
+  description = "The list of user logins with dismissal access."
+}
+
+variable "branch_protection_dismissal_teams" {
+  type        = "list"
+  default     = []
+  description = "The list of team slugs with dismissal access."
+}
+
+variable "branch_protection_require_code_owner_reviews" {
+  type        = "string"
+  default     = false
+  description = "Require an approved review in pull requests including files with a designated code owner."
+}
+
+variable "branch_protection_restrictions_users" {
+  type        = "list"
+  default     = []
+  description = "The list of user logins with push access."
+}
+
+variable "branch_protection_restrictions_teams" {
+  type        = "list"
+  default     = []
+  description = "The list of team slugs with push access."
 }

@@ -1,3 +1,9 @@
+# 1.5.0 (2019-03-15)
+
+### Features
+
+* add `branch_protection ` support.
+
 # [1.4.0] (2019-03-13)
 
 ### Features

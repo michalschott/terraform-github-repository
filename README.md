@@ -102,6 +102,23 @@ module "repository" {
 | `teams` | `list` | Add the repository to a team or update teams permission on the repository. |
 | `deploy_keys` | `list` | Add deploy keys (SSH keys) that grants access to the repository. |
 
+If enabled, `branch_protection` adds the the following keys:
+
+| Name | Type | Description |
+| --- | --- | --- |
+|`branch_protection_enabled`|`string`|Enable branch protection for the default branch|
+|`branch_protection_enforce_admins`|`string`|Setting this to true enforces status checks for repository administrators. Default: `false`|
+|`branch_protection_strict`|`string`|Require branches to be up to date before merging. Default: `true`|
+|`branch_protection_contexts`|`list`|The list of status checks to require in order to merge into this branch. Default: `[]`|
+|`branch_protection_dismiss_stale_reviews`|`string`|Dismiss approved reviews automatically when a new commit is pushed. Default: `true`.|
+|`branch_protection_dismissal_users`|`list`|The list of user logins with dismissal access. Default: `[]`|
+|`branch_protection_dismissal_teams`|`list`|The list of team slugs with dismissal access. Always use slug of the team, not its name. Each team already has to have access to the repository. Default: `[]`|
+|`branch_protection_require_code_owner_reviews`|`string`|Require an approved review in pull requests including files with a designated code owner. Default: `false`|
+|`branch_protection_restrictions_users`|`list`|The list of user logins with push access. Default: `[]`|
+|`branch_protection_restrictions_teams`|`list`|The list of team slugs with push access. Always use slug of the team, not its name. Each team already has to have access to the repository. Default: `[]`|
+
+Note that`branch_protection` only applies to the default branch of the repository.
+
 The `collaborators` object must have the following keys:
 
 | Name | Type | Description |

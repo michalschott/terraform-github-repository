@@ -62,3 +62,29 @@ resource "github_issue_label" "main" {
   color       = "${lookup(var.issue_labels[count.index], "color")}"
   description = "${lookup(var.issue_labels[count.index], "description", "")}"
 }
+
+resource "github_branch_protection" "main" {
+  # Hack from https://github.com/hashicorp/terraform/issues/2831#issuecomment-124163153
+  count = "${var.branch_protection_enabled ? 1 : 0}"
+
+  repository     = "${github_repository.main.name}"
+  branch         = "${github_repository.main.default_branch}"
+  enforce_admins = "${var.branch_protection_enforce_admins}"
+
+  required_status_checks {
+    strict   = "${var.branch_protection_strict}"
+    contexts = "${var.branch_protection_contexts}"
+  }
+
+  required_pull_request_reviews {
+    dismiss_stale_reviews      = "${var.branch_protection_dismiss_stale_reviews}"
+    dismissal_users            = "${var.branch_protection_dismissal_users}"
+    dismissal_teams            = "${var.branch_protection_dismissal_teams}"
+    require_code_owner_reviews = "${var.branch_protection_require_code_owner_reviews}"
+  }
+
+  restrictions {
+    users = "${var.branch_protection_restrictions_users}"
+    teams = "${var.branch_protection_restrictions_teams}"
+  }
+}
