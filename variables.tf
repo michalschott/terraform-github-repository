@@ -121,3 +121,8 @@ variable "deploy_keys" {
   description = "Add deploy keys (SSH keys) that grants access to the repository."
 }
 
+variable "branch_protection" {
+  type        = any
+  default     = []
+  description = "Configure branch protection on the repository."
+}

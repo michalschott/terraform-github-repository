@@ -78,6 +78,34 @@ module "repository" {
 }
 ```
 
+### Configure branch protection
+
+```hcl
+module "repository" {
+  source = "innovationnorway/repository/github"
+
+  name = "example"
+
+  description = "My example codebase"
+
+  branch_protection = [
+    {
+      branch = "master"
+
+      required_status_checks = {
+        strict   = true
+        contexts = ["terraform-fmt"]
+      }
+
+      required_pull_request_reviews = {
+        dismiss_stale_reviews      = true
+        require_code_owner_reviews = true
+      }
+    },
+  ]
+}
+```
+
 ## Arguments
 
 | Name | Type | Description |
@@ -101,6 +129,7 @@ module "repository" {
 | `collaborators` | `list` | Add users as collaborators on the repository. | 
 | `teams` | `list` | Add the repository to a team or update teams permission on the repository. |
 | `deploy_keys` | `list` | Add deploy keys (SSH keys) that grants access to the repository. |
+| `branch_protection` | `list` | Configure branch protection on the repository. |
 
 The `collaborators` object must have the following keys:
 
@@ -124,6 +153,39 @@ The `deploy_keys` object must have the following keys:
 | `key` | `string` | The contents of the key. |
 | `read_only` | `bool` | Deploy keys with write access can perform the same actions as an organization member with admin access, or a collaborator on a personal repository. Default: `true`. |
 
+The `branch_protection` object can have the following keys:
+
+| Name | Type | Description |
+| --- | --- | --- |
+| `branch` | `string` | The branch name. |
+| `enforce_admins` | `bool` | Enforce all configured restrictions for administrators. Set to `true` to enforce required status checks for repository administrators.  |
+| `required_status_checks` | `object` | Require status checks to pass before merging. |
+| `required_pull_request_reviews` | `object` | Require at least one approving review on a pull request, before merging. |
+| `restrictions` | `object` | Restrict who can push to this branch. |
+
+The `required_status_checks` object can have the following keys:
+
+| Name | Type | Description |
+| --- | --- | --- |
+| `strict` | `bool` | Require branches to be up to date before merging. |
+| `contexts` | `list` | The list of status checks to require in order to merge into this branch. |
+
+The `required_pull_request_reviews` object can have the following keys:
+
+| Name | Type | Description |
+| --- | --- | --- |
+| `dismissal_users` | `list` | The list of user `login`s with dismissal access. |
+| `dismissal_teams` | `list` | The list of team `slug`s with dismissal access. |
+| `dismiss_stale_reviews` | `bool` | Set to `true` if you want to automatically dismiss approving reviews when someone pushes a new commit. |
+| `require_code_owner_reviews` | `bool` | Blocks merging pull requests until [code owners](https://help.github.com/articles/about-code-owners/) review them. |
+
+The `restrictions` object must have the following keys:
+
+| Name | Type | Description |
+| --- | --- | --- |
+| `users` | `list` | The list of user `login`s with push access. |
+| `teams` | `list` | The list of team `slug`s with push access. |
+
 ## Limitations
 
-Due to current limitations of the Terraform language, items added or removed from the `collaborators`, `teams` and `deploy_keys` lists, will also update subsequent items with indexes greater than where the addition or removal was made. 
+Due to current limitations of the Terraform language, items added or removed from the `branch_protection`, `collaborators`, `teams` and `deploy_keys` lists, will also update subsequent items with indexes greater than where the addition or removal was made. 

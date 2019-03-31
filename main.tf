@@ -54,3 +54,53 @@ resource "github_repository_deploy_key" "main" {
   read_only  = lookup(var.deploy_keys[count.index], "read_only", true)
 }
 
+resource "github_branch_protection" "main" {
+  count = length(var.branch_protection)
+
+  repository = github_repository.main.name
+
+  branch = var.branch_protection[count.index].branch
+
+  enforce_admins = lookup(var.branch_protection[count.index], "enforce_admins", null)
+
+  dynamic "required_status_checks" {
+    for_each = (
+      lookup(var.branch_protection[count.index], "required_status_checks", null) != null ?
+      [var.branch_protection[count.index].required_status_checks] :
+      []
+    )
+
+    content {
+      strict   = lookup(required_status_checks.value, "strict", null)
+      contexts = lookup(required_status_checks.value, "contexts", null)
+    }
+  }
+
+  dynamic "required_pull_request_reviews" {
+    for_each = (
+      lookup(var.branch_protection[count.index], "required_pull_request_reviews", null) != null ?
+      [var.branch_protection[count.index].required_pull_request_reviews] :
+      []
+    )
+
+    content {
+      dismiss_stale_reviews      = lookup(required_pull_request_reviews.value, "dismiss_stale_reviews", null)
+      dismissal_users            = lookup(required_pull_request_reviews.value, "dismissal_users", null)
+      dismissal_teams            = lookup(required_pull_request_reviews.value, "dismissal_teams", null)
+      require_code_owner_reviews = lookup(required_pull_request_reviews.value, "require_code_owner_reviews", null)
+    }
+  }
+
+  dynamic "restrictions" {
+    for_each = (
+      lookup(var.branch_protection[count.index], "restrictions", null) != null ?
+      [var.branch_protection[count.index].restrictions] :
+      []
+    )
+
+    content {
+      users = lookup(restrictions.value, "users", null)
+      teams = lookup(restrictions.value, "teams", null)
+    }
+  }
+}
