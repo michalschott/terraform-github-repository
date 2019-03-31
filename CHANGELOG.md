@@ -1,3 +1,10 @@
+# [2.1.0](https://github.com/innovationnorway/terraform-github-repository/compare/v2.0.0...v2.1.0) (2019-03-31)
+
+
+### Features
+
+* add `branch_protection` argument ([4b2f079](https://github.com/innovationnorway/terraform-github-repository/commit/4b2f079))
+
 # [2.0.0](https://github.com/innovationnorway/terraform-github-repository/compare/v1.3.0...v2.0.0) (2019-03-01)
 
 
