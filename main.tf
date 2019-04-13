@@ -1,7 +1,7 @@
 locals {
   deploy_keys = [
     for d in var.deploy_keys : merge({
-      title     = ""
+      title     = substr(d.key, 0, 26)
       key       = null
       read_only = true
     }, d)
@@ -87,10 +87,10 @@ resource "github_team_repository" "main" {
 
 resource "github_repository_deploy_key" "main" {
   count      = length(local.deploy_keys)
-  title      = var.deploy_keys[count.index].title
+  title      = local.deploy_keys[count.index].title
   repository = github_repository.main.name
-  key        = var.deploy_keys[count.index].key
-  read_only  = var.deploy_keys[count.index].read_only
+  key        = local.deploy_keys[count.index].key
+  read_only  = local.deploy_keys[count.index].read_only
 }
 
 resource "github_branch_protection" "main" {
