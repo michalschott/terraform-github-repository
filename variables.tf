@@ -122,3 +122,9 @@ variable "branch_protection" {
   default     = []
   description = "Configure branch protection on the repository."
 }
+
+variable "delete_branch_on_merge" {
+  type        = bool
+  default     = false
+  description = "Should source branch be deleted after merge."
+}

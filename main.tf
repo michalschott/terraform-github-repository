@@ -11,6 +11,7 @@ locals {
     for b in var.branch_protection : merge({
       branch                        = null
       enforce_admins                = null
+      require_signed_commits        = null
       required_status_checks        = []
       required_pull_request_reviews = []
       restrictions                  = []
@@ -29,10 +30,11 @@ locals {
   required_pull_request_reviews = [
     for b in local.branch_protection : [
       for r in b.required_pull_request_reviews[*] : merge({
-        dismiss_stale_reviews      = true
-        dismissal_users            = []
-        dismissal_teams            = []
-        require_code_owner_reviews = null
+        dismiss_stale_reviews           = true
+        dismissal_users                 = []
+        dismissal_teams                 = []
+        require_code_owner_reviews      = null
+        required_approving_review_count = null
       }, r)
     ]
   ]
@@ -48,22 +50,23 @@ locals {
 }
 
 resource "github_repository" "main" {
-  name               = var.name
-  description        = var.description
-  homepage_url       = var.homepage_url
-  private            = var.private
-  has_issues         = var.has_issues
-  has_projects       = var.has_projects
-  has_wiki           = var.has_wiki
-  allow_merge_commit = var.allow_merge_commit
-  allow_squash_merge = var.allow_squash_merge
-  allow_rebase_merge = var.allow_rebase_merge
-  auto_init          = var.auto_init
-  gitignore_template = var.gitignore_template
-  license_template   = var.license_template
-  default_branch     = var.default_branch
-  archived           = var.archived
-  topics             = var.topics
+  name                   = var.name
+  description            = var.description
+  homepage_url           = var.homepage_url
+  private                = var.private
+  has_issues             = var.has_issues
+  has_projects           = var.has_projects
+  has_wiki               = var.has_wiki
+  allow_merge_commit     = var.allow_merge_commit
+  allow_squash_merge     = var.allow_squash_merge
+  allow_rebase_merge     = var.allow_rebase_merge
+  auto_init              = var.auto_init
+  gitignore_template     = var.gitignore_template
+  license_template       = var.license_template
+  default_branch         = var.default_branch
+  archived               = var.archived
+  topics                 = var.topics
+  delete_branch_on_merge = var.delete_branch_on_merge
 }
 
 resource "github_repository_collaborator" "main" {
@@ -94,10 +97,11 @@ resource "github_repository_deploy_key" "main" {
 }
 
 resource "github_branch_protection" "main" {
-  count          = length(local.branch_protection)
-  repository     = github_repository.main.name
-  branch         = local.branch_protection[count.index].branch
-  enforce_admins = local.branch_protection[count.index].enforce_admins
+  count                  = length(local.branch_protection)
+  repository             = github_repository.main.name
+  branch                 = local.branch_protection[count.index].branch
+  enforce_admins         = local.branch_protection[count.index].enforce_admins
+  require_signed_commits = local.branch_protection[count.index].require_signed_commits
 
   dynamic "required_status_checks" {
     for_each = local.required_status_checks[count.index]
@@ -112,10 +116,11 @@ resource "github_branch_protection" "main" {
     for_each = local.required_pull_request_reviews[count.index]
 
     content {
-      dismiss_stale_reviews      = required_pull_request_reviews.value.dismiss_stale_reviews
-      dismissal_users            = required_pull_request_reviews.value.dismissal_users
-      dismissal_teams            = required_pull_request_reviews.value.dismissal_teams
-      require_code_owner_reviews = required_pull_request_reviews.value.require_code_owner_reviews
+      dismiss_stale_reviews           = required_pull_request_reviews.value.dismiss_stale_reviews
+      dismissal_users                 = required_pull_request_reviews.value.dismissal_users
+      dismissal_teams                 = required_pull_request_reviews.value.dismissal_teams
+      require_code_owner_reviews      = required_pull_request_reviews.value.require_code_owner_reviews
+      required_approving_review_count = required_pull_request_reviews.value.required_approving_review_count
     }
   }
 
